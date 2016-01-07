@@ -5,7 +5,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	DEBCONF_NONINTERACTIVE_SEEN=true \
 	GOSU_VER=1.7
 
-COPY apt-proxy.conf /etc/apt/apt.conf.d/01proxy
 COPY gpg/* /root/.gnupg/
 
 RUN chmod -R go-rwx /root/.gnupg \
@@ -38,5 +37,7 @@ RUN update-ca-certificates
 
 # Remove setuid/setgid permissions from files
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
+
+COPY apt-proxy.conf /etc/apt/apt.conf.d/01proxy
 
 CMD ["/bin/bash"]
