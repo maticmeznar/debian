@@ -15,7 +15,7 @@ push:
 	sudo docker push ${FULL_NAME}
 
 run:
-	sudo docker run --rm --name ${NAME} ${FULL_NAME}
+	sudo docker run --rm --name ${NAME} -it ${FULL_NAME}
 
 test:
 	@echo ${FULL_NAME}
