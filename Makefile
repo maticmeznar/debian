@@ -3,12 +3,12 @@ NAME := $(notdir $(shell pwd))
 DOCKER_PATH := /blinkr/
 FULL_NAME := ${DOCKER_REGISTRY}${DOCKER_PATH}${NAME}
 
-default: dep docker push
+default: dep build push
 
 dep:
 	@if test -z ${DOCKER_REGISTRY}; then echo "Error: Missing 'DOCKER_REGISTRY' ENV variable"; exit 1; fi;
 
-docker:
+build:
 	sudo docker build --pull -t ${FULL_NAME} -f Dockerfile .
 
 push:
