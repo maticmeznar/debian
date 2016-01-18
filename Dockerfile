@@ -24,12 +24,22 @@ ENV GOSU_VER=1.7 \
 	BIN_HOME=/usr/local/bin \
 	CONFD_VERSION=0.11.0 \
 	CONFD_SHA256=a67bab5d6c6d5bd6c5e671f8ddd473fa67eb7fd48494d51a855f5e4482f2d54c \
-        CONFD_BIN=/usr/local/bin/confd
+        CONFD_BIN=/usr/local/bin/confd \
+	DOCKERIZE_VERSION=0.0.4 \
+	DOCKERIZE_SHA256=f9a3a1e86ade98d52c189de881f99416ce7c38bfa69b7cbfd1c18e9239509e81 \
+	DOCKERIZE_TMP=/tmp/dockerize-linux-amd64.tar.gz
+
 
 # Setup GnuPG
 COPY gpg/* /root/.gnupg/
 RUN chmod -R go-rwx /root/.gnupg \
 	&& chown -R root:root /root/.gnupg
+
+# Install Dockerize
+RUN curl -fL -o ${DOCKERIZE_TMP} "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz" \
+        && echo "${DOCKERIZE_SHA256}  ${DOCKERIZE_TMP}" | sha256sum -c \
+	&& tar -C ${BIN_HOME} -xzvf ${DOCKERIZE_TMP} \
+        && rm -f ${DOCKERIZE_TMP}
 
 # Install confd
 RUN curl -fL -o ${CONFD_BIN} "https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64" \
