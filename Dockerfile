@@ -1,6 +1,9 @@
 FROM docker.io/debian:jessie
 MAINTAINER Matic Meznar <matic@meznar.si>
 
+# Add Blinkr CA certs
+COPY certs/* /usr/local/share/ca-certificates/
+
 # Setup APT and update packages
 ENV DEBIAN_FRONTEND=noninteractive \
 	DEBCONF_NONINTERACTIVE_SEEN=true
@@ -39,33 +42,29 @@ RUN chmod -R go-rwx /root/.gnupg \
 RUN curl -fL -o ${DOCKERIZE_TMP} "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz" \
         && echo "${DOCKERIZE_SHA256}  ${DOCKERIZE_TMP}" | sha256sum -c \
 	&& tar -C ${BIN_HOME} -xzvf ${DOCKERIZE_TMP} \
-        && rm -f ${DOCKERIZE_TMP}
+        && rm -f ${DOCKERIZE_TMP} \
+	&& chmod 0555 ${BIN_HOME}/dockerize
 
 # Install confd
 RUN curl -fL -o ${CONFD_BIN} "https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64" \
-	&& echo "${CONFD_SHA256}  ${CONFD_BIN}" | sha256sum -c
+	&& echo "${CONFD_SHA256}  ${CONFD_BIN}" | sha256sum -c \
+	&& chmod 0555 ${CONFD_BIN}
 
 # Install Hashicorp Vault
 RUN curl -fL -o ${VAULT_TMP} "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip" \
 	&& echo "${VAULT_SHA256}  ${VAULT_TMP}" | sha256sum -c \
 	&& unzip ${VAULT_TMP} -d ${BIN_HOME} \
-	&& rm -f ${VAULT_TMP}
+	&& rm -f ${VAULT_TMP} \
+	&& chmod 0555 ${BIN_HOME}/vault
 
 # Install gosu
-RUN gpg --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/${GOSU_VER}/gosu-$(dpkg --print-architecture)" \
-       && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/${GOSU_VER}/gosu-$(dpkg --print-architecture).asc" \
+RUN gpg --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/${GOSU_VER}/gosu-$(dpkg --print-architecture)" \
+	&& curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/${GOSU_VER}/gosu-$(dpkg --print-architecture).asc" \
         && gpg --verify /usr/local/bin/gosu.asc \
         && rm /usr/local/bin/gosu.asc \
-        && chmod +x /usr/local/bin/gosu \
+	&& chmod 0555 /usr/local/bin/gosu \
 	&& gpg --batch --delete-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-
-# Setup up permissions for just installed binaries
-RUN chmod 0555 -R ${BIN_HOME}
-
-# Add Blinkr CA certs
-COPY certs/* /usr/local/share/ca-certificates/
-RUN update-ca-certificates
 
 # Remove setuid/setgid permissions from files
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
