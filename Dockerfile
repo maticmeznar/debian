@@ -14,6 +14,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 		ca-certificates \
 		curl \
 		gnupg-curl \
+		jq \
 		less \
 		unzip \
 	&& apt-get clean \
