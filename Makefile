@@ -2,6 +2,7 @@
 NAME := $(notdir $(shell pwd))
 DOCKER_PATH := /blinkr/
 FULL_NAME := ${DOCKER_REGISTRY}${DOCKER_PATH}${NAME}
+FROM_IMAGE := $(shell cat Dockerfile |grep "^FROM " | awk '{print $$2}')
 
 default: dep build squash push
 
@@ -19,6 +20,7 @@ run:
 
 test:
 	@echo ${FULL_NAME}
+	@echo ${FROM_IMAGE}
 
 squash:
-	sudo ~/.local/bin/docker-scripts squash -t ${FULL_NAME} -f debian:jessie ${FULL_NAME}:tmp
+	sudo ~/.local/bin/docker-scripts squash -t ${FULL_NAME} -f ${FROM_IMAGE} ${FULL_NAME}:tmp
