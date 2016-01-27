@@ -1,4 +1,4 @@
-FROM docker.io/debian:jessie
+FROM debian:jessie
 MAINTAINER Matic Meznar <matic@meznar.si>
 
 # Add Blinkr CA certs
@@ -71,5 +71,6 @@ RUN gpg --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 
 COPY apt-proxy.conf /etc/apt/apt.conf.d/01proxy
+COPY vault.sh /etc/vault.sh
 
 CMD ["/bin/bash"]

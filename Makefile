@@ -4,13 +4,13 @@ DOCKER_PATH := /blinkr/
 FULL_NAME := ${DOCKER_REGISTRY}${DOCKER_PATH}${NAME}
 FROM_IMAGE := $(shell cat Dockerfile |grep "^FROM " | awk '{print $$2}')
 
-default: dep build squash push
+default: dep build push
 
 dep:
 	@if test -z ${DOCKER_REGISTRY}; then echo "Error: Missing 'DOCKER_REGISTRY' ENV variable"; exit 1; fi;
 
 build:
-	sudo docker build --pull -t ${FULL_NAME}:tmp -f Dockerfile .
+	sudo docker build --pull -t ${FULL_NAME} -f Dockerfile .
 
 push:
 	sudo docker push ${FULL_NAME}
