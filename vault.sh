@@ -14,7 +14,7 @@ vaultLogin () {
 	# VAULT_APP_ID="test"
 	# VAULT_USER_ID="test-user"
 	# export VAULT_ADDR="https://akula:8200"
-	export VAULT_TOKEN=$(curl -fs "${VAULT_ADDR}"/v1/auth/app-id/login -d '{"app_id":"'${VAULT_APP_ID}'","user_id":"'${VAULT_USER_ID}'"}' | jq -r .auth.client_token)
+	declare -gx VAULT_TOKEN=$(curl -fsS "${VAULT_ADDR}"/v1/auth/app-id/login -d '{"app_id":"'${VAULT_APP_ID}'","user_id":"'${VAULT_USER_ID}'"}' | jq -r .auth.client_token)
 	if [ $VAULT_TOKEN == "null" ]; then
 		echo "vaultLogin: Error. Unable to read or parse from Vault"
 		exit 1

@@ -16,6 +16,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 		gnupg-curl \
 		jq \
 		less \
+		nano \
 		unzip \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
@@ -25,6 +26,7 @@ ENV GOSU_VER=1.7 \
 	VAULT_VERSION=0.4.0 \
         VAULT_SHA256=f56933cb7a445db89f8832016a862ca39b3e63dedb05709251e59d6bb40c56e8 \
 	VAULT_TMP=/tmp/vault.zip \
+	VAULT_ADDR=https://vault:8200/ \
 	BIN_HOME=/usr/local/bin \
 	CONFD_VERSION=0.11.0 \
 	CONFD_SHA256=a67bab5d6c6d5bd6c5e671f8ddd473fa67eb7fd48494d51a855f5e4482f2d54c \
@@ -68,7 +70,7 @@ RUN gpg --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 	&& gpg --batch --delete-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
 
 # Remove setuid/setgid permissions from files
-RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
+#RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 
 COPY apt-proxy.conf /etc/apt/apt.conf.d/01proxy
 COPY vault.sh /etc/vault.sh
