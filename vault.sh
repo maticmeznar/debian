@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ou pipefail
+set -o pipefail
 
 TMP_FILE="/dev/shm/vault_data.json.tmp"
 
@@ -72,7 +72,14 @@ vaultPki () {
         	echo "vaultPki: Error: Unable to get certificate"
         	dirtyExit
         fi
-        
+
         jq -e -r .data.certificate $TMP_FILE > ${file_path}.crt.pem
         jq -e -r .data.private_key $TMP_FILE > ${file_path}.key.pem
+
+        echo "vaultPki: Success"
 }
+
+if ! [ "$VAULT_APP_ID" -a "$VAULT_USER_ID" -a "$VAULT_ADDR" ]; then
+	echo "vaultInit: Error: One or more VAULT_* environmental variables are missing."
+	dirtyExit
+fi
