@@ -7,6 +7,10 @@ COPY certs/* /usr/local/share/ca-certificates/
 # Setup APT and update packages
 ENV DEBIAN_FRONTEND=noninteractive \
 	DEBCONF_NONINTERACTIVE_SEEN=true
+
+# Some asshole decided to install a different ping util in docker debian root image
+# causing compatibility problems as they produce different output.
+# iputils-ping is the proper package and I install it here to fix those problems.
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
 	&& apt-get update \
 	&& apt-get upgrade -y \
