@@ -28,8 +28,8 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 # Set other variables
 ENV GOSU_VER=1.7 \
-	VAULT_VERSION=0.5.0 \
-        VAULT_SHA256=f81accce15313881b8d53b039daf090398b2204b1154f821a863438ca2e5d570 \
+	VAULT_VERSION=0.5.2 \
+	VAULT_SHA256=7517b21d2c709e661914fbae1f6bf3622d9347b0fe9fc3334d78a01d1e1b4ec2 \
 	VAULT_TMP=/tmp/vault.zip \
 	VAULT_ADDR=https://vault:8200/ \
 	BIN_HOME=/usr/local/bin \
